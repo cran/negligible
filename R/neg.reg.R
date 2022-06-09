@@ -1,18 +1,16 @@
-#' Test for Evaluating Negligible Effects Between a Predictor and Outcome in a Multiple Regression Model
+#' @title Test for Evaluating Negligible Effects Between a Predictor and Outcome in a Multiple Regression Model
 #'
-#' This function tests whether a certain predictor variable cand be considered statistically and practically negligble according to a predefined interval (i.e., SESOI/MMES/delta) based on the Anderson-Hauck (1983) test of equivalence or Schuirmann's (1987) Two One-Sided Test (TOST)
-#'
-#' @aliases equiv.reg
-#' When data is available
+#' @description This function tests whether a certain predictor variable in a multiple regression model can be considered statistically and practically negligible according to a predefined interval. i.e., minimally meaningful effect size,MMES/smallest effect size of interest, SESOI (where
+#' in this case, the effect is the relationship between the predictor of interest and the outcome variable, holding the other predictors constant). Developed from the Anderson-Hauck (1983) and Schuirmann's (1987) Two One-Sided Test (TOST) equivalence testing procedures.
+#' 
+#' 
 #' @param data a data.frame or matrix which includes the variables considered in the regression model
 #' @param formula an argument of the form y~x1+x2...xn which defines the regression model
 #' @param predictor name of the variable/predictor upon which the test will be applied
-#' Data not required
 #' @param b effect size of the regression coefficient of interest, can be in standardized or unstandardized units
 #' @param se standard error associated with the above regression coefficient effect size, pay close attention to standardized vs. unstandardized
 #' @param nop number of predictors (excluding intercept) in the regression model
 #' @param n the sample size used in the regression analysis
-#' Needed for both
 #' @param eil lower bound of the equivalence interval measured in the same units as the regression coefficients (can be either standardized or unstandardized)
 #' @param eiu upper bound of the equivalence interval measured in the same units as the regression coefficients (can be either standardized or unstandardized)
 #' @param alpha desired alpha level, default is .05
@@ -25,11 +23,16 @@
 #' @param saveplots FALSE for no, "png" and "jpeg" for different formats
 #' @param seed to reproduce previous analyses using bootstrapping, the user can set their seed of choice
 #' @param ... additional arguments to be passed
-#' @return returns a \code{list} containing each analysis and their respective statistics and decision
+#' 
+#' 
+#' @return returns a \code{list} containing each analysis and 
+#' their respective statistics and decision
 #'
 #' @author Udi Alter \email{udialter@@yorku.ca} and
 #'   Alyssa Counsell \email{a.counsell@@ryerson.ca}
 #' @export neg.reg
+#' 
+#' 
 #' @examples
 #' # Negligible Regression Coefficient (equivalence interval: -.1 to .1)
 #' pr1 <- stats::rnorm(20)
@@ -38,7 +41,9 @@
 #' dat <- data.frame(pr1,pr2,dp)
 #' # dataset available (unstandardized coefficients, AH procedure):
 #' neg.reg(formula=dp~pr1+pr2,data=dat,predictor=pr1,eil=-.1,eiu=.1,nboot=50)
-#' # end
+#' 
+
+
 neg.reg <- function(data=NULL, formula=NULL, predictor=NULL, #input for full dataset
                     b = NULL, se=NULL, nop=NULL, n=NULL,     #input for no dataset
                     eil, eiu, alpha=.05, test="AH", std=FALSE,
@@ -252,8 +257,8 @@ neg.reg <- function(data=NULL, formula=NULL, predictor=NULL, #input for full dat
     H.A.del <- ((u.delta-l.delta)/2)/se #this is the delta as defined in Hauck and Anderson (1986)
     p.value <- stats::pt(abs(t.value)-H.A.del,df) - stats::pt(-abs(t.value)-H.A.del, df)
 
-    ifelse(p.value < alpha, decision <- 'A negligible effect is concluded',
-           decision <-'Insufficient evidence for concluding a negligible effect')
+    ifelse(p.value < alpha, decision <- 'The null hypothesis that the regression coefficient is non-negligible can be rejected. A negligible effect is concluded. Be sure to interpret the magnitude (and precision) of the effect size.',
+           decision <-'The null hypothesis that the regression coefficient is non-negligible cannot be rejected. There is insufficient evidence to conclude a negligible effect. Be sure to interpret the magnitude (and precision) of the effect size.')
   }
 
   # Two One-Sided Tests (TOST)
@@ -267,8 +272,8 @@ neg.reg <- function(data=NULL, formula=NULL, predictor=NULL, #input for full dat
     ifelse(abs(t.value.1) <= abs(t.value.2), t.value <- t.value.1, t.value <- t.value.2) # finding the smaller t to present
     ifelse(p.value.1 >= p.value.2, p.value <- p.value.1, p.value <- p.value.2) # finding the larger p to present
 
-    ifelse(p.value.1 < alpha & p.value.2 < alpha, decision <- 'A negligible effect is concluded',
-           decision <-'Insufficient evidence for concluding a negligible effect')
+    ifelse(p.value.1 < alpha & p.value.2 < alpha, decision <- 'The null hypothesis that the regression coefficient is non-negligible can be rejected. A negligible effect is concluded. The null hypothesis that the direct effect (difference between the total and indirect effect) is non-negligible can be rejected. Substantial Mediation CAN be concluded. Be sure to interpret the magnitude (and precision) of the effect size.',
+           decision <-'The null hypothesis that the regression coefficient is non-negligible cannot be rejected. There is insufficient evidence to conclude a negligible effect. The null hypothesis that the direct effect (difference between the total and indirect effect) is non-negligible can be rejected. Substantial Mediation CAN be concluded. Be sure to interpret the magnitude (and precision) of the effect size.')
   }
 
 
@@ -314,11 +319,11 @@ neg.reg <- function(data=NULL, formula=NULL, predictor=NULL, #input for full dat
 return(ret)
 } # end of entire function
 
-#' @rdname neg.twocors
-#' @param x object of class \code{neg.twocors}
+#' @rdname neg.reg
+#' @param x object of class \code{neg.reg}
+#' @return
 #' @export
 #'
-
 print.neg.reg <- function(x,...) {
   ifelse(round(x$p.value,3) == 0, p.val <- " < 0.001", p.val <- paste(" = ", round(x$p.value,3), sep = ""))
   cat("\n\n")

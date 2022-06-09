@@ -1,5 +1,3 @@
-#library(DescTools)
-
 #' @title Equivalence Testing for Categorical Variables
 #' @description Testing for the presence of a negligible association between two categorical variables
 #'
@@ -7,15 +5,39 @@
 #' @param v2 second categorical variable
 #' @param tab contingency table for the two predictor variables
 #' @param eiU upper limit of equivalence interval
-#' @param data data file containing the categorical variables
+#' @param data optional data file containing the categorical variables
 #' @param alpha nominal acceptable Type I error rate level
-#' @param plot should a plot be printed out with the effect and the proportional distance
+#' @param plot logical; should a plot be printed out with the effect and the proportional distance
 #' @param save should the plot be saved to 'jpg' or 'png'
-#' @param nbootpd number of bootstrap samples for calcuating the CI for the proportional distance
+#' @param nbootpd number of bootstrap samples for calculating the CI for the proportional distance
 #'
-#' @return returns a \code{list} containing each analysis and their respective statistics
-#'   and decision
+#' @return A \code{list} containing the following:
+#' \itemize{
+#'   \item \code{cramv} Cramer's V statistic
+#'   \item \code{propvar} Proportion of variance explained (V^2)
+#'   \item \code{cil} Lower bound of the confidence interval for Cramer's V
+#'   \item \code{ciu} Upper bound of the confidence interval for Cramer's V
+#'   \item \code{eiU} Upper bound of the negligible effect (equivalence) interval
+#'   \item \code{decis} NHST decision
+#'   \item \code{PD} Proportional distance
+#'   \item \code{CI95L} Lower bound of the 1-alpha CI for the PD
+#'   \item \code{CI95U} Upper bound of the 1-alpha CI for the PD
+#'   \item \code{alpha} Nominal Type I error rate
+#' }
 #' @export
+#' @details This function evaluates whether a negligible relationship exists among two categorical variables.
+#'
+#' The statistical test is based on the Cramer's V statistic; namely addressing the question of whether the upper limit of the confidence interval for Cramer's V falls below the upper bound of the negligible effect (equivalence) interval (eiU).
+#'
+#' If the upper bound of the CI for Cramer's V falls below eiU, we can reject Ho: The relationship is nonnegligible (V >= eiU).
+#'
+#' eiU is set to .2 by default, but should be set based on the context of the research. Since Cramer's V statistic is in a correlation metric, setting eiU is a matter of determining what correlation is the minimally meaningful effect size (MMES) given the context of the research.
+#'
+#' Users can input either the names of the categorical variables (v1, v2) or a frequency (contingency) table (tab).
+#'
+#' The proportional distance (V/eiU) estimates the proportional distance of the effect from 0 to eiU, and acts as an alternative effect size measure.
+#'
+#' The confidence interval for the proportional distance is computed via bootstrapping (percentile bootstrap).
 #'
 #' @examples
 #' sex<-rep(c("m","f"),c(12,22))
@@ -30,9 +52,7 @@ neg.cat <- function (v1 = NULL, v2 = NULL,
       alpha = .05) {
 
   if (!is.null(tab) & is.null(data)) {
-    #tab <- deparse(substitute(tab))
-    #tab <- as.matrix(tab)
-    countsToCases <- function(x, countcol = "Freq") {
+      countsToCases <- function(x, countcol = "Freq") {
       idx <- rep.int(seq_len(nrow(x)), x[[countcol]])
       x[[countcol]] <- NULL
       x[idx, ]
@@ -65,8 +85,8 @@ neg.cat <- function (v1 = NULL, v2 = NULL,
       cv <- DescTools::CramerV(tab,conf.level=(1-2*alpha))
   propvar = cv[1]^2
   ifelse (cv[3] <= eiU,
-        decis <- "The null hypothesis that the relationship between the categorical variables is substantial can be rejected",
-        decis <- "The null hypothesis that the relationship between the categorical variables is substantial CANNOT be rejected")
+        decis <- "The null hypothesis that the relationship between the categorical variables is substantial can be rejected. A negligible relationship among the variables is concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
+        decis <- "The null hypothesis that the relationship between the categorical variables is substantial CANNOT be rejected. There is insufficient evidence to conclude a negligible effect. Be sure to interpret the magnitude (and precision) of the effect size.")
 
   #### Plots ####
   # Calculate Proportional Distance
