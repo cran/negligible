@@ -2,7 +2,7 @@ Package: negligible
 Type: Package
 Title: A Collection of Functions for Negligible Effect/Equivalence
         Testing
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     c(person(given = "Robert",
              family = "Cribbie",
@@ -47,11 +47,11 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: DescTools, lavaan, WRS2, ggplot2, nptest, dplyr, fungible,
-        rockchalk
-RoxygenNote: 7.1.2
+        rockchalk, MBESS, tidyr
+RoxygenNote: 7.2.1
 Depends: R (>= 2.10)
 NeedsCompilation: no
-Packaged: 2022-06-09 15:29:04 UTC; test
+Packaged: 2022-08-11 20:07:23 UTC; cribbie
 Author: Robert Cribbie [aut, cre],
   Udi Alter [aut],
   Nataly Beribisky [aut],
@@ -61,4 +61,4 @@ Author: Robert Cribbie [aut, cre],
   Naomi Martinez Gutierrez [aut],
   Victoria Ng [ctb]
 Repository: CRAN
-Date/Publication: 2022-06-09 22:40:05 UTC
+Date/Publication: 2022-08-11 21:40:05 UTC

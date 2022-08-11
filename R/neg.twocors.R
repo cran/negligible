@@ -87,7 +87,7 @@
 #' v2b <- stats::rnorm(10)
 #' dat<-data.frame(v1a, v2a, v1b, v2b)
 #' # dataset available (independent correlation coefficients):
-#' neg.twocors(r1v1=v1a,r1v2=v2a,r2v1=v1b,r2v2=v2b,data=dat,eiu=.15,eil=-0.15,nboot=50)
+#' neg.twocors(r1v1=v1a,r1v2=v2a,r2v1=v1b,r2v2=v2b,data=dat,eiu=.15,eil=-.15,nboot=50, dep=FALSE)
 #' neg.twocors(r1=0.5,n1=300,r2=0.6,n2=500,eiu=.15,eil=-0.15, dep=TRUE, r3=0.51)
 #' # end.
 #'
@@ -363,11 +363,11 @@ neg.twocors <- function(data=NULL, r1v1=NULL, r1v2=NULL, r2v1=NULL, r2v2=NULL, #
   z2 <- NA
   }
 # DECISION AH
-  ifelse(p.value < alpha, decision <- "The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the specified equivalence interval), can be rejected. A negligible difference between population correlation coefficients can be concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
-         decision <- "The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the equivalence interval), was NOT rejected. There is insufficient evidence to declare the difference in the population correlation coefficients negligible. Be sure to interpret the magnitude (and precision) of the effect size.")
+  ifelse(p.value < alpha, decision <- "The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the specified equivalence interval), can be rejected. A negligible difference between the two correlation coefficients in the population can be concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
+         decision <- "The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the equivalence interval), was NOT rejected: There is insufficient evidence that the difference between the two correlation coefficients is negligible in the population. Be sure to interpret the magnitude (and precision) of the effect size.")
 # DECISION KTOST
-  ifelse(p.value.1 < alpha & p.value.2 < alpha, decision.tost <- "The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the equivalence interval), can be rejected. A negligible difference between population correlation coefficients can be concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
-         decision.tost <-"The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the equivalence interval), was NOT rejected. There is insufficient evidence to declare the difference in the population correlation coefficients negligible. Be sure to interpret the magnitude (and precision) of the effect size.")
+  ifelse(p.value.1 < alpha & p.value.2 < alpha, decision.tost <- "The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the equivalence interval), can be rejected. A negligible difference between the two correlation coefficients in the population can be concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
+         decision.tost <-"The null hypothesis that the difference between the two correlation coefficients is non-negligible (i.e., beyond the equivalence interval), was NOT rejected: There is insufficient evidence that the difference between the two correlation coefficients is negligible in the population. Be sure to interpret the magnitude (and precision) of the effect size.")
 
 # Organizing for output and Value
  ifelse(p.value.1 <= p.value.2, pv <- p.value.2, pv <- p.value.1)
@@ -412,7 +412,7 @@ neg.twocors <- function(data=NULL, r1v1=NULL, r1v2=NULL, r2v1=NULL, r2v2=NULL, #
                     EIc = EIc,
                     pv = pv,
                     p.value = p.value,
-                    p.value.1= p.value.1,
+                    p.value.1 = p.value.1,
                     p.value.2 = p.value.2,
                     z1 = z1,
                     z2 = z2,
@@ -429,6 +429,7 @@ neg.twocors <- function(data=NULL, r1v1=NULL, r1v2=NULL, r2v1=NULL, r2v2=NULL, #
                     bootstrap = bootstrap,
                     nboot = nboot,
                     plots = plots,
+                    oe="Correlation Coefficients' Difference",
                     saveplots = saveplots)
   class(res) <- "neg.twocors"
   return(res)
@@ -436,7 +437,6 @@ neg.twocors <- function(data=NULL, r1v1=NULL, r1v2=NULL, r2v1=NULL, r2v2=NULL, #
 #' @rdname neg.twocors
 #' @param x object of class \code{neg.twocors}
 #' @param ... extra arguments
-#' @return
 #' @export
 #'
 
@@ -480,14 +480,14 @@ print.neg.twocors<- function(x,...) {
 
   # NHST results
   if (x$test == "AH"){
-  ifelse(round(x$p.value,3) == 0, p.val <- "< 0.001", p.val <- paste("= ", round(x$p.value,3), sep = ""))
+  ifelse(x$p.value < 0.001, p.val <- "< 0.001", p.val <- paste("= ", round(x$p.value,3), sep = ""))
   cat(x$testID)
-  cat("\nEquivalence Interval: ","Lower = ", x$eil, ", ", "Upper = ", x$eiu, "\n", sep = "")
+  cat("\nEquivalence Interval: ","Lower = ", round(x$eil,3), ", ", "Upper = ", round(x$eiu,3), "\n", sep = "")
   cat("p value ",p.val,"\n", sep = "")
   cat("NHST Decision: ", x$decision,"\n", sep = "")
   } else { # if KTOST
     cat(x$testID.tost)
-    cat("\nEquivalence Interval: ","Lower = ", x$eil, ", ", "Upper = ", x$eiu, "\n", sep = "")
+    cat("\nEquivalence Interval: ","Lower = ", round(x$eil,3), ", ", "Upper = ", round(x$eiu,3), "\n", sep = "")
     if(x$test == "TOST" & x$bootstrap == TRUE){
       cat(x$perc.2a,"% bootstrap-generated CI for r1-r2: [",round(x$l.ci.2a,3),", ",round(x$u.ci.2a,3),"]\n", sep = "")
     }
@@ -503,16 +503,16 @@ print.neg.twocors<- function(x,...) {
       cat("t2 value = ",round(x$t2,3),"\n", sep = "")
       cat("with ",x$degfree," degrees of freedom\n", sep = "")
     }
-    ifelse(round(x$p.value.1,3) == 0, p1.val <- "< 0.001", p1.val <- paste("= ", round(x$p.value.1,3), sep = ""))
-    ifelse(round(x$p.value.2,3) == 0, p2.val <- "< 0.001", p2.val <- paste("= ", round(x$p.value.2,3), sep = ""))
+    ifelse(x$p.value.1 < 0.001, p1.val <- "< 0.001", p1.val <- paste("= ", round(x$p.value.1,3), sep = ""))
+    ifelse(x$p.value.2 < 0.001, p2.val <- "< 0.001", p2.val <- paste("= ", round(x$p.value.2,3), sep = ""))
     cat("p1 value ",p1.val,"\n", sep = "")
     cat("p2 value ",p2.val,"\n", sep = "", "\n")
     cat("NHST Decision: ", x$decision.tost,"\n", sep = "")
     cat("\n*Note that when using the KTOST-\u03C1 or TOST-\u03C1-D procedures, the null hypothesis of a non-negligible difference between the two population correlation coefficients is only rejected if BOTH p values are less than \u03B1.\n")
     }
     if(x$plots == TRUE) {
-    neg.pd(effect=x$rawdiff, PD = x$pd, EIsign=x$EIc, PDcil=x$pd.l.ci, PDciu=x$pd.u.ci, cil=x$l.ci.2a,
-           ciu=x$u.ci.2a, Elevel=100*(1-2*x$alpha), Plevel=100*(1-x$alpha), save = x$saveplots)
+      neg.pd(effect=x$rawdiff, PD = x$pd, eil=x$eil, eiu=x$eiu, PDcil=x$pd.l.ci, PDciu=x$pd.u.ci, cil=x$l.ci.2a,
+             ciu=x$u.ci.2a, Elevel=100*(1-2*x$alpha), Plevel=100*(1-x$alpha), save = x$saveplots, oe=x$oe)
       if (x$test=="AH"){
       cat("\n*Note that NHST decisions using the AH-\u03C1 and AH-\u03C1-D procedures may not match KTOST-\u03C1 and TOST-\u03C1-D results or the Symmetric CI Approach at 100*(1-2\u03B1)% illustrated in the plot. \n")
         }

@@ -74,9 +74,9 @@
 #' xx<-neg.twoindmeans(dv=depvar,iv=indvar,eiL=-1,eiU=1)
 #' xx$decis
 neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
-                             eiL, eiU, varequiv = FALSE, normality = FALSE,
-                             tr = 0.2, nboot = 500, alpha = 0.05,
-                             plot = TRUE, saveplot = FALSE, data=NULL) {
+                            eiL, eiU, varequiv = FALSE, normality = FALSE,
+                            tr = 0.2, nboot = 500, alpha = 0.05,
+                            plot = TRUE, saveplot = FALSE, data=NULL) {
   if (!is.null(data)) {
     v1 <- deparse(substitute(v1))
     v2 <- deparse(substitute(v2))
@@ -87,7 +87,7 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
     if(iv=="NULL") {iv<-NULL}
     if(dv=="NULL") {dv<-NULL}
   }
-    if (is.null(v1) & is.null(v2) & !is.null(data)) {
+  if (is.null(v1) & is.null(v2) & !is.null(data)) {
     dv<-as.numeric(data[[dv]])
     iv<-as.factor(data[[iv]])
     dat<- data.frame(dv,iv)
@@ -104,10 +104,10 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
     lev2<-"v2"
   }
   if (is.null(dv) & is.null(iv) & is.null(data)) {
-      v1 <- v1[!is.na(v1)]
-      v2 <- v2[!is.na(v2)]
-      lev1<-"v1"
-      lev2<-"v2"
+    v1 <- v1[!is.na(v1)]
+    v2 <- v2[!is.na(v2)]
+    lev1<-"v1"
+    lev2<-"v2"
   }
   if (is.null(v1) & is.null(v2) & is.null(data)) {
     d<-data.frame(iv,dv)
@@ -157,8 +157,8 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
     }
     if (varequiv == TRUE) {
       denom <- sqrt(((((length(v1) - 1) * stats::sd(v1)^2) +
-                ((length(v2) - 1) * stats::sd(v2)^2))/(length(v1) +
-                length(v2) - 2)) * (1/length(v1) + 1/length(v2)))
+                        ((length(v2) - 1) * stats::sd(v2)^2))/(length(v1) +
+                                                                 length(v2) - 2)) * (1/length(v1) + 1/length(v2)))
       t1 <- (mean(v1) - mean(v2) - eiU)/denom
       t2 <- (mean(v1) - mean(v2) - eiL)/denom
       dft <- length(v1) + length(v2) - 2
@@ -170,7 +170,7 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
       effsize_raw<-mean(v1)-mean(v2)
       effsize_d<-(mean(v1)-mean(v2))/
         sqrt((((length(v1) - 1) * stats::sd(v1)^2) + ((length(v2) - 1) * stats::sd(v2)^2))/
-                (length(v1) + length(v2) - 2))
+               (length(v1) + length(v2) - 2))
       ifelse(sign(mean(v1)-mean(v2))==sign(eiL),
              ein<-eiL,ein<-eiU)
       effsize_pd<-(mean(v1)-mean(v2))/abs(ein)
@@ -200,9 +200,9 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
     h1 <- length(v1) - 2 * floor(tr * length(v1))
     h2 <- length(v2) - 2 * floor(tr * length(v2))
     q1 <- (length(v1) - 1) * WRS2::winvar(v1, tr)/(h1 *
-             (h1 - 1))
+                                                     (h1 - 1))
     q2 <- (length(v2) - 1) * WRS2::winvar(v2, tr)/(h2 *
-             (h2 - 1))
+                                                     (h2 - 1))
     dft <- (q1 + q2)^2/((q1^2/(h1 - 1)) + (q2^2/(h2 -
                                                    1)))
     crit <- stats::qt(1 - alpha/2, dft)
@@ -273,6 +273,7 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
                     alpha = alpha,
                     title1 = title,
                     pl = plot,
+                    oe="Mean Difference",
                     save = saveplot)
   class(ret) <- "neg.twoindmeans"
   return(ret)
@@ -281,7 +282,6 @@ neg.twoindmeans <- function(v1 = NULL, v2 = NULL, dv = NULL, iv = NULL,
 #' @rdname neg.twoindmeans
 #' @param x object of class \code{neg.twoindmeans}
 #' @param ... extra arguments
-#' @return
 #' @export
 #'
 
@@ -316,15 +316,17 @@ print.neg.twoindmeans <- function(x, ...) {
 
   if (x$pl == TRUE) {
     neg.pd(effect = x$effsizeraw,
-                         PD = x$effsizepd,
-                         EIsign=x$eisign,
-                         PDcil=x$cilpd,
-                         PDciu=x$ciupd,
-                         cil=x$cilraw,
-                         ciu=x$ciuraw,
-                         Elevel=100*(1-2*x$alpha),
-                         Plevel=100*(1-x$alpha),
-                         save = x$save)
+           PD = x$effsizepd,
+           eil=x$eiL,
+           eiu=x$eiU,
+           PDcil=x$cilpd,
+           PDciu=x$ciupd,
+           cil=x$cilraw,
+           ciu=x$ciuraw,
+           Elevel=100*(1-2*x$alpha),
+           Plevel=100*(1-x$alpha),
+           save = x$save,
+           oe=x$oe)
   }
 }
 

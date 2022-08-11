@@ -47,12 +47,12 @@
 #' neg.cat(tab=tab, alpha=.05, nbootpd=50)
 #' neg.cat(v1=sex, v2=haircol, data=d, nbootpd=50)
 neg.cat <- function (v1 = NULL, v2 = NULL,
-      tab = NULL, eiU = .2, data = NULL,
-      plot = TRUE, save = FALSE, nbootpd = 1000,
-      alpha = .05) {
+                     tab = NULL, eiU = .2, data = NULL,
+                     plot = TRUE, save = FALSE, nbootpd = 1000,
+                     alpha = .05) {
 
   if (!is.null(tab) & is.null(data)) {
-      countsToCases <- function(x, countcol = "Freq") {
+    countsToCases <- function(x, countcol = "Freq") {
       idx <- rep.int(seq_len(nrow(x)), x[[countcol]])
       x[[countcol]] <- NULL
       x[idx, ]
@@ -82,11 +82,11 @@ neg.cat <- function (v1 = NULL, v2 = NULL,
   if (any(tab<=1)) {
     print("Do not trust results, frequencies in one or more categories are too low for the analysis. You might also receive an error related to the low frequencies.")
   }
-      cv <- DescTools::CramerV(tab,conf.level=(1-2*alpha))
+  cv <- DescTools::CramerV(tab,conf.level=(1-2*alpha))
   propvar = cv[1]^2
   ifelse (cv[3] <= eiU,
-        decis <- "The null hypothesis that the relationship between the categorical variables is substantial can be rejected. A negligible relationship among the variables is concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
-        decis <- "The null hypothesis that the relationship between the categorical variables is substantial CANNOT be rejected. There is insufficient evidence to conclude a negligible effect. Be sure to interpret the magnitude (and precision) of the effect size.")
+          decis <- "The null hypothesis that the relationship between the categorical variables is substantial can be rejected. A negligible relationship among the variables is concluded. Be sure to interpret the magnitude (and precision) of the effect size.",
+          decis <- "The null hypothesis that the relationship between the categorical variables is substantial CANNOT be rejected. There is insufficient evidence to conclude a negligible effect. Be sure to interpret the magnitude (and precision) of the effect size.")
 
   #### Plots ####
   # Calculate Proportional Distance
@@ -103,17 +103,18 @@ neg.cat <- function (v1 = NULL, v2 = NULL,
   CI95L<-stats::quantile(propd,.025,na.rm=TRUE)
   CI95U<-stats::quantile(propd,.975,na.rm=TRUE)
   ret <- data.frame(cramv = cv[1],
-                  propvar = propvar,
-                  cil = cv[2],
-                  ciu = cv[3],
-                  eiU = eiU,
-                  decis = decis,
-                  PD = PD,
-                  CI95L = CI95L,
-                  CI95U = CI95U,
-                  pl = plot,
-                  alpha = alpha,
-                  save = save)
+                    propvar = propvar,
+                    cil = cv[2],
+                    ciu = cv[3],
+                    eiU = eiU,
+                    decis = decis,
+                    PD = PD,
+                    CI95L = CI95L,
+                    CI95U = CI95U,
+                    pl = plot,
+                    alpha = alpha,
+                    oe = "Cramer's V",
+                    save = save)
   class(ret) <- "neg.cat"
   return(ret)
 }
@@ -121,7 +122,6 @@ neg.cat <- function (v1 = NULL, v2 = NULL,
 #' @rdname neg.cat
 #' @param x Data frame from neg.cat
 #' @param ... extra arguments
-#' @return
 #' @export
 #'
 print.neg.cat <- function (x, ...) {
@@ -150,9 +150,7 @@ print.neg.cat <- function (x, ...) {
 
 
   if (x$pl == TRUE) {
-    neg.pd(effect=x$cramv, PD = x$PD, EIsign=x$eiU, PDcil=x$CI95L, PDciu=x$CI95U, cil=x$cil, ciu=x$ciu, Elevel=100*(1-2*x$alpha), Plevel=100*(1-x$alpha), save = x$save)
+    neg.pd(effect=x$cramv, PD = x$PD, eil=x$eiU, eiu=x$eiU, PDcil=x$CI95L, PDciu=x$CI95U, cil=x$cil, ciu=x$ciu, Elevel=100*(1-2*x$alpha), Plevel=100*(1-x$alpha), save = x$save, oe=x$oe)
   }
 
 }
-
-
