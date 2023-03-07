@@ -1,5 +1,9 @@
 #' @title Perfectionism Data
 #'
+#' @docType data
+#'
+#' @usage data(perfectionism)
+#'
 #' @description This dataset comes from the dissertation of Chantal Arpin-Cribbie.
 #' The study was an RCT looking at the effect of an online CBT therapy on
 #' perfectionism (and related variables) in a sample of undergraduate

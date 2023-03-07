@@ -31,7 +31,7 @@ A data frame with 83 rows and 17 variables:
 \url{https://pubmed.ncbi.nlm.nih.gov/22122217/}
 }
 \usage{
-perfectionism
+data(perfectionism)
 }
 \description{
 This dataset comes from the dissertation of Chantal Arpin-Cribbie.

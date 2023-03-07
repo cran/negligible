@@ -11,7 +11,7 @@ neg.rmsea(
   eq.bound,
   modif.eq.bound = FALSE,
   ci.method = "not.close",
-  nbootpd = 100L,
+  nbootpd = 50L,
   nboot = 250L,
   round = 3,
   plot = TRUE,
@@ -29,7 +29,7 @@ neg.rmsea(
 
 \item{modif.eq.bound}{should the upper end of the equivalence interval be modified? (default = FALSE)}
 
-\item{ci.method}{method used to calculate confidence interval; options are "not.close" or "yhy.boot"; "not.close" corresponds to 100(1-2alpha) percent CI, "yhy.boot" corresponds to 100(1-2alpha) percent boot CI (default = "not.close")}
+\item{ci.method}{method used to calculate confidence interval; options are "not.close" or "yhy.boot"; "not.close" corresponds to (1-2alpha) percent CI, "yhy.boot" corresponds to (1-2alpha) percent boot CI (default = "not.close")}
 
 \item{nbootpd}{number of bootstrap samples by "yhy.boot" for pd function}
 
@@ -62,13 +62,11 @@ returns a \code{list} including the following:
 Function performs one of four equivalence tests for RMSEA fit index.
 }
 \details{
-The user specifies the lavaan fitted model object, the desired equivalence bound, and method of confidence interal computation. By default, the function does not modify the equivalence bounds according to Yuan et al. (2016). The user can also choose to instead run an equivalence test using a modified equivalence bound if the equivalence bound to be modified is .01, .05, .08, or .10. Alpha level can also be modified.
+The user specifies the lavaan fitted model object, the desired equivalence bound, and method of confidence interval computation. By default, the function does not modify the equivalence bounds according to Yuan et al. (2016). The user can also choose to instead run an equivalence test using a modified equivalence bound if the equivalence bound to be modified is .01, .05, .08, or .10. Alpha level can also be modified.
 
 For information on modified equivalence bounds see Yuan, K. H., Chan, W., Marcoulides, G. A., & Bentler, P. M. (2016). Assessing structural equation models by equivalence testing with adjusted fit indexes. Structural Equation Modeling: A Multidisciplinary Journal, 23(3), 319-330. doi: https://doi.org/10.1080/10705511.2015.1065414.
 
 The proportional distance quantifies the proportional distance from 0 to the nearest negligible effect (equivalence) interval (here, eiU). As values get farther from 0 the relationship becomes more substantial, with values greater than 1 indicating that the effect falls outside of the negligible effect (equivalence) interval.
-
-Note that the number of bootstrap samples (nbootpd) are low for the example since the example has a time limit of 5 seconds to pass CRAN testing; we recommend running a much higher number of bootstrap samples for analyses.
 }
 \examples{
 d <- lavaan::HolzingerSwineford1939
@@ -77,9 +75,11 @@ textual =~ x4 + x5 + x6
 speed =~ x7 + x8 + x9'
 fit1 <- lavaan::cfa(hs.mod, data = d)
 neg.rmsea(alpha = .05, mod = fit1, eq.bound = .05, ci.method = "not.close", modif.eq.bound = FALSE,
-round = 5, nbootpd = 25)
+round = 5, nboot = 50)
 }
 \author{
 Rob Cribbie \email{cribbie@yorku.ca} and
   Nataly Beribisky \email{natalyb1@yorku.ca}
+
+ @export neg.rmsea
 }
