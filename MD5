@@ -1,4 +1,4 @@
-289c09e1849c9720c2cfac4b434120a5 *DESCRIPTION
+2c13dc7e90d4887cc5e803e8799fff69 *DESCRIPTION
 16f6d306749023fd7d70f6e44e3958b3 *NAMESPACE
 0a1c65c77f5d4eccb4f52f81e04dfd5d *R/globals.R
 3b8fd1481efd1862e144c20feea40979 *R/neg.cat.R
@@ -9,7 +9,7 @@ bc0a102e818310ea2d436d6df1f1a7cc *R/neg.cor.R
 88c35d4eb583c7158f0a2fd86d07a479 *R/neg.intcat.R
 17f2e0bbaf73115bc0deea2164224136 *R/neg.intcont.R
 4130e6afbe863434e1f61a0ca32b12ca *R/neg.paired.R
-2ee96a0fc82574ab6434f5bdee515047 *R/neg.pd.R
+f29a34a8d158bd60d95f7566f045ba01 *R/neg.pd.R
 5d535a6549ff30edac0f5dcbf3e5a028 *R/neg.reg.R
 e055ac29f258242da6389b2e5a347c39 *R/neg.rmsea.R
 fdedd90e43d1e7728abca684d71f3dc1 *R/neg.semfit.R
