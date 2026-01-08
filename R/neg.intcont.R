@@ -112,34 +112,22 @@ neg.intcont <- function (outcome = NULL, pred1 = NULL,
     invisible(utils::capture.output(sprs <-
           rockchalk::getDeltaRsquare(m)))
     sprs<-round(sprs,3)
-    invisible(utils::capture.output(SEs<-
-          fungible::seBeta(X = dat[,2:4], y = dat[,1],
-          cov.x = stats::cov(dat[,2:4]),
-          cov.xy = stats::cov(dat[,1:4])[1,2:4],
-          var.y = stats::var(dat[,1]),
-          Nobs = nrow(dat),
-          alpha = alpha*2)))
-    intcil<-SEs$CIs[3,1]
+    SEs<-effectsize::standardize_parameters(m,ci=1-2*alpha)
+    intcil<-SEs[4,4]
     intcil <- round(intcil, 3)
-    intciu<-SEs$CIs[3,3]
+    intciu<-SEs[4,5]
     intciu <- round(intciu, 3)
-    intcoef<-SEs$CIs[3,2]
+    intcoef<-SEs[4,2]
     intcoef <- round(intcoef, 3)
     ifelse(intcil >= eiL & intciu <= eiU,
            decis <- "The null hypothesis that the interaction is not negligible can be rejected",
            decis <- "The null hypothesis that the interaction is not negligible CANNOT be rejected")
-    invisible(utils::capture.output(SEsr<-fungible::seBeta(X = dat[,2:4], y = dat[,1],
-          cov.x = stats::cov(dat[,2:4]),
-          cov.xy = stats::cov(dat[,1:4])[1,2:4],
-          var.y = stats::var(dat[,1]),
-          Nobs = nrow(dat),
-          alpha = alpha)))
-    intcilr<-SEsr$CIs[3,1]
-    intcilr <- round(intcilr, 3)
-    intciur<-SEsr$CIs[3,3]
-    intciur <- round(intciur, 3)
-    test<-"-- The Delta Method is used for Calculating the SEs with Standardized Variables --"
-
+    SEs<-effectsize::standardize_parameters(m,ci=1-alpha)
+    intcilr<-SEs[4,4]
+    intcilr <- round(intcil, 3)
+    intciur <-SEs[4,5]
+    intciur <- round(intciu, 3)
+    test<-"-- The Variables are Standardized Before Creating the Interaction and Calculating the SEs for Standardized Variables --"
     # Calculate Proportional Distance
     ifelse(intcoef<0, eiPD<-eiL, eiPD<-eiU)
     PD <- intcoef/abs(eiPD)
